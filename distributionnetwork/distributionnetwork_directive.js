@@ -1,34 +1,34 @@
 //
-// Flowchart module.
+// Flownetwork module.
 //
-angular.module('flowChart', ['dragging'] )
+angular.module('distributionNetwork', ['dragging'] )
 
 //
-// Directive that generates the rendered chart from the data model.
+// Directive that generates the rendered network from the data model.
 //
-.directive('flowChart', function() {
+.directive('distributionNetwork', function() {
   return {
   	restrict: 'E',
-  	templateUrl: "flowchart/flowchart_template.html",
+  	templateUrl: "distributionnetwork/distributionnetwork_template.html",
   	replace: true,
   	scope: {
-  		chart: "=chart",
+  		network: "=network",
   	},
 
   	//
-  	// Controller for the flowchart directive.
+  	// Controller for the distributionnetwork directive.
   	// Having a separate controller is better for unit testing, otherwise
   	// it is painful to unit test a directive without instantiating the DOM 
   	// (which is possible, just not ideal).
   	//
-  	controller: 'FlowChartController',
+  	controller: 'DistributionNetworkController',
   };
 })
 
 //
-// Directive that allows the chart to be edited as json in a textarea.
+// Directive that allows the network to be edited as json in a textarea.
 //
-.directive('chartJsonEdit', function () {
+.directive('networkJsonEdit', function () {
 	return {
 		restrict: 'A',
 		scope: {
@@ -63,7 +63,7 @@ angular.module('flowChart', ['dragging'] )
 			$(elem).bind("input propertychange", function () {
 				var json = $(elem).val();
 				var dataModel = JSON.parse(json);
-				scope.viewModel = new flowchart.ChartViewModel(dataModel);
+				scope.viewModel = new distributionnetwork.ChartViewModel(dataModel);
 
 				scope.$digest();
 			});
@@ -73,12 +73,12 @@ angular.module('flowChart', ['dragging'] )
 })
 
 //
-// Controller for the flowchart directive.
+// Controller for the distributionnetwork directive.
 // Having a separate controller is better for unit testing, otherwise
 // it is painful to unit test a directive without instantiating the DOM 
 // (which is possible, just not ideal).
 //
-.controller('FlowChartController', ['$scope', 'dragging', '$element', function FlowChartController ($scope, dragging, $element) {
+.controller('DistributionNetworkController', ['$scope', 'dragging', '$element', function DistributionNetworkController ($scope, dragging, $element) {
 
 	var controller = this;
 
@@ -110,18 +110,18 @@ angular.module('flowChart', ['dragging'] )
 	*/
 
 	//
-	// Reference to the connection, connector or node that the mouse is currently over.
+	// Reference to the connection, connector or block that the mouse is currently over.
 	//
 	$scope.mouseOverConnector = null;
 	$scope.mouseOverConnection = null;
-	$scope.mouseOverNode = null;
+	$scope.mouseOverBlock = null;
 
 	//
 	// The class for connections and connectors.
 	//
 	this.connectionClass = 'connection';
 	this.connectorClass = 'connector';
-	this.nodeClass = 'node';
+	this.blockClass = 'block';
 
 	//
 	// Search up the HTML element tree for an element the requested class.
@@ -152,7 +152,7 @@ angular.module('flowChart', ['dragging'] )
 	};
 
 	//
-	// Hit test and retreive node and connector that was hit at the specified coordinates.
+	// Hit test and retreive block and connector that was hit at the specified coordinates.
 	//
 	this.hitTest = function (clientX, clientY) {
 
@@ -163,7 +163,7 @@ angular.module('flowChart', ['dragging'] )
 	};
 
 	//
-	// Hit test and retreive node and connector that was hit at the specified coordinates.
+	// Hit test and retreive block and connector that was hit at the specified coordinates.
 	//
 	this.checkForHit = function (mouseOverElement, whichClass) {
 
@@ -191,11 +191,11 @@ angular.module('flowChart', ['dragging'] )
 	};
 
 	//
-	// Called on mouse down in the chart.
+	// Called on mouse down in the network.
 	//
 	$scope.mouseDown = function (evt) {
 
-		$scope.chart.deselectAll();
+		$scope.network.deselectAll();
 
 		dragging.startDrag(evt, {
 
@@ -234,7 +234,7 @@ angular.module('flowChart', ['dragging'] )
 			//
 			dragEnded: function () {
 				$scope.dragSelecting = false;
-				$scope.chart.applySelectionRect($scope.dragSelectionRect);
+				$scope.network.applySelectionRect($scope.dragSelectionRect);
 				delete $scope.dragSelectionStartPoint;
 				delete $scope.dragSelectionRect;
 			},
@@ -251,7 +251,7 @@ angular.module('flowChart', ['dragging'] )
 		//
 		$scope.mouseOverConnection = null;
 		$scope.mouseOverConnector = null;
-		$scope.mouseOverNode = null;
+		$scope.mouseOverBlock = null;
 
 		var mouseOverElement = controller.hitTest(evt.clientX, evt.clientY);
 		if (mouseOverElement == null) {
@@ -278,23 +278,23 @@ angular.module('flowChart', ['dragging'] )
 			return;
 		}
 
-		// Figure out if the mouse is over a node.
-		var scope = controller.checkForHit(mouseOverElement, controller.nodeClass);
-		$scope.mouseOverNode = (scope && scope.node) ? scope.node : null;		
+		// Figure out if the mouse is over a block.
+		var scope = controller.checkForHit(mouseOverElement, controller.blockClass);
+		$scope.mouseOverBlock = (scope && scope.block) ? scope.block : null;		
 	};
 
 	//
-	// Handle mousedown on a node.
+	// Handle mousedown on a block.
 	//
-	$scope.nodeMouseDown = function (evt, node) {
+	$scope.blockMouseDown = function (evt, block) {
 
-		var chart = $scope.chart;
+		var network = $scope.network;
 		var lastMouseCoords;
 
 		dragging.startDrag(evt, {
 
 			//
-			// Node dragging has commenced.
+			// Block dragging has commenced.
 			//
 			dragStarted: function (x, y) {
 
@@ -302,16 +302,16 @@ angular.module('flowChart', ['dragging'] )
 
 				//
 				// If nothing is selected when dragging starts, 
-				// at least select the node we are dragging.
+				// at least select the block we are dragging.
 				//
-				if (!node.selected()) {
-					chart.deselectAll();
-					node.select();
+				if (!block.selected()) {
+					network.deselectAll();
+					block.select();
 				}
 			},
 			
 			//
-			// Dragging selected nodes... update their x,y coordinates.
+			// Dragging selected blocks... update their x,y coordinates.
 			//
 			dragging: function (x, y) {
 
@@ -319,16 +319,16 @@ angular.module('flowChart', ['dragging'] )
 				var deltaX = curCoords.x - lastMouseCoords.x;
 				var deltaY = curCoords.y - lastMouseCoords.y;
 
-				chart.updateSelectedNodesLocation(deltaX, deltaY);
+				network.updateSelectedBlocksLocation(deltaX, deltaY);
 
 				lastMouseCoords = curCoords;
 			},
 
 			//
-			// The node wasn't dragged... it was clicked.
+			// The block wasn't dragged... it was clicked.
 			//
 			clicked: function () {
-				chart.handleNodeClicked(node, evt.ctrlKey);
+				network.handleBlockClicked(block, evt.ctrlKey);
 			},
 
 		});
@@ -338,10 +338,10 @@ angular.module('flowChart', ['dragging'] )
 	// Handle mousedown on a connection.
 	//
 	$scope.connectionMouseDown = function (evt, connection) {
-		var chart = $scope.chart;
-		chart.handleConnectionMouseDown(connection, evt.ctrlKey);
+		var network = $scope.network;
+		network.handleConnectionMouseDown(connection, evt.ctrlKey);
 
-		// Don't let the chart handle the mouse down.
+		// Don't let the network handle the mouse down.
 		evt.stopPropagation();
 		evt.preventDefault();
 	};
@@ -349,7 +349,7 @@ angular.module('flowChart', ['dragging'] )
 	//
 	// Handle mousedown on an input connector.
 	//
-	$scope.connectorMouseDown = function (evt, node, connector, connectorIndex, isInputConnector) {
+	$scope.connectorMouseDown = function (evt, block, connector, connectorIndex, isInputConnector) {
 
 		//
 		// Initiate dragging out of a connection.
@@ -365,13 +365,13 @@ angular.module('flowChart', ['dragging'] )
 				var curCoords = controller.translateCoordinates(x, y, evt);
 
 				$scope.draggingConnection = true;
-				$scope.dragPoint1 = flowchart.computeConnectorPos(node, connectorIndex, isInputConnector);
+				$scope.dragPoint1 = distributionnetwork.computeConnectorPos(block, connectorIndex, isInputConnector);
 				$scope.dragPoint2 = {
 					x: curCoords.x,
 					y: curCoords.y
 				};
-				$scope.dragTangent1 = flowchart.computeConnectionSourceTangent($scope.dragPoint1, $scope.dragPoint2);
-				$scope.dragTangent2 = flowchart.computeConnectionDestTangent($scope.dragPoint1, $scope.dragPoint2);
+				$scope.dragTangent1 = distributionnetwork.computeConnectionSourceTangent($scope.dragPoint1, $scope.dragPoint2);
+				$scope.dragTangent2 = distributionnetwork.computeConnectionDestTangent($scope.dragPoint1, $scope.dragPoint2);
 			},
 
 			//
@@ -379,13 +379,13 @@ angular.module('flowChart', ['dragging'] )
 			//
 			dragging: function (x, y, evt) {
 				var startCoords = controller.translateCoordinates(x, y, evt);
-				$scope.dragPoint1 = flowchart.computeConnectorPos(node, connectorIndex, isInputConnector);
+				$scope.dragPoint1 = distributionnetwork.computeConnectorPos(block, connectorIndex, isInputConnector);
 				$scope.dragPoint2 = {
 					x: startCoords.x,
 					y: startCoords.y
 				};
-				$scope.dragTangent1 = flowchart.computeConnectionSourceTangent($scope.dragPoint1, $scope.dragPoint2);
-				$scope.dragTangent2 = flowchart.computeConnectionDestTangent($scope.dragPoint1, $scope.dragPoint2);
+				$scope.dragTangent1 = distributionnetwork.computeConnectionSourceTangent($scope.dragPoint1, $scope.dragPoint2);
+				$scope.dragTangent2 = distributionnetwork.computeConnectionDestTangent($scope.dragPoint1, $scope.dragPoint2);
 			},
 
 			//
@@ -401,7 +401,7 @@ angular.module('flowChart', ['dragging'] )
 					// The mouse is over a valid connector...
 					// Create a new connection.
 					//
-					$scope.chart.createNewConnection(connector, $scope.mouseOverConnector);
+					$scope.network.createNewConnection(connector, $scope.mouseOverConnector);
 				}
 
 				$scope.draggingConnection = false;

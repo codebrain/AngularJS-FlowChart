@@ -1,18 +1,18 @@
-describe('flowchart-viewmodel', function () {
+describe('distributionnetwork-viewmodel', function () {
 
 	//
 	// Create a mock data model from a simple definition.
 	//
-	var createMockDataModel = function (nodeIds, connections) {
+	var createMockDataModel = function (blockIds, connections) {
 
-		var nodeDataModels = null;
+		var blockDataModels = null;
 
-		if (nodeIds) {
-			nodeDataModels = [];
+		if (blockIds) {
+			blockDataModels = [];
 
-			for (var i = 0; i < nodeIds.length; ++i) {
-				nodeDataModels.push({
-					id: nodeIds[i],
+			for (var i = 0; i < blockIds.length; ++i) {
+				blockDataModels.push({
+					id: blockIds[i],
 					x: 0,
 					y: 0,
 					inputConnectors: [ {}, {}, {} ],
@@ -29,11 +29,11 @@ describe('flowchart-viewmodel', function () {
 			for (var i = 0; i < connections.length; ++i) {
 				connectionDataModels.push({
 					source: {
-						nodeID: connections[i][0][0],
+						blockID: connections[i][0][0],
 						connectorIndex: connections[i][0][1],
 					},
 					dest: {
-						nodeID: connections[i][1][0],
+						blockID: connections[i][1][0],
 						connectorIndex: connections[i][1][1],
 					},
 				});
@@ -42,8 +42,8 @@ describe('flowchart-viewmodel', function () {
 
 		var dataModel = {};
 
-		if (nodeDataModels) {
-			dataModel.nodes = nodeDataModels;
+		if (blockDataModels) {
+			dataModel.blocks = blockDataModels;
 		}
 
 		if (connectionDataModels) {
@@ -55,14 +55,14 @@ describe('flowchart-viewmodel', function () {
 
 	it('compute computeConnectorPos', function () {
 
-		var mockNode = {
+		var mockBlock = {
 			x: function () { return 10 },
 			y: function () { return 15 },
 		};
 
-		flowchart.computeConnectorPos(mockNode, 0, true);
-		flowchart.computeConnectorPos(mockNode, 1, true);
-		flowchart.computeConnectorPos(mockNode, 2, true);
+		distributionnetwork.computeConnectorPos(mockBlock, 0, true);
+		distributionnetwork.computeConnectorPos(mockBlock, 1, true);
+		distributionnetwork.computeConnectorPos(mockBlock, 2, true);
 	});
 
 	it('construct ConnectorViewModel', function () {
@@ -71,25 +71,25 @@ describe('flowchart-viewmodel', function () {
 			name: "Fooey",
 		};
 
-		new flowchart.ConnectorViewModel(mockDataModel, 0, 10, 0);
-		new flowchart.ConnectorViewModel(mockDataModel, 0, 10, 1);
-		new flowchart.ConnectorViewModel(mockDataModel, 0, 10, 2);
+		new distributionnetwork.ConnectorViewModel(mockDataModel, 0, 10, 0);
+		new distributionnetwork.ConnectorViewModel(mockDataModel, 0, 10, 1);
+		new distributionnetwork.ConnectorViewModel(mockDataModel, 0, 10, 2);
 
 	});
 
-	it('ConnectorViewModel has reference to parent node', function () {
+	it('ConnectorViewModel has reference to parent block', function () {
 
 		var mockDataModel = {
 			name: "Fooey",
 		};
-		var mockParentNodeViewModel = {};
+		var mockParentBlockViewModel = {};
 
-		var testObject = new flowchart.ConnectorViewModel(mockDataModel, 0, 10, mockParentNodeViewModel);
+		var testObject = new distributionnetwork.ConnectorViewModel(mockDataModel, 0, 10, mockParentBlockViewModel);
 
-		expect(testObject.parentNode()).toBe(mockParentNodeViewModel);
+		expect(testObject.parentBlock()).toBe(mockParentBlockViewModel);
 	});
 
-		it('construct NodeViewModel with no connectors', function () {
+		it('construct BlockViewModel with no connectors', function () {
 
 		var mockDataModel = {
 			x: 10,
@@ -97,10 +97,10 @@ describe('flowchart-viewmodel', function () {
 			name: "Woot",
 		};
 
-		new flowchart.NodeViewModel(mockDataModel);
+		new distributionnetwork.BlockViewModel(mockDataModel);
 	});
 
-	it('construct NodeViewModel with empty connectors', function () {
+	it('construct BlockViewModel with empty connectors', function () {
 
 		var mockDataModel = {
 			x: 10,
@@ -110,17 +110,15 @@ describe('flowchart-viewmodel', function () {
 			outputConnectors: [],
 		};
 
-		new flowchart.NodeViewModel(mockDataModel);
+		new distributionnetwork.BlockViewModel(mockDataModel);
 	});
 
-	it('construct NodeViewModel with connectors', function () {
+	it('construct BlockViewModel with connectors', function () {
 
 		var mockInputConnector = {
-			name: "Input",
 		};		
 
 		var mockOutputConnector = {
-			name: "Output",
 		};		
 
 		var mockDataModel = {
@@ -135,57 +133,57 @@ describe('flowchart-viewmodel', function () {
 			],
 		};
 
-		new flowchart.NodeViewModel(mockDataModel);
+		new distributionnetwork.BlockViewModel(mockDataModel);
 	});
 
-	it('test name of NodeViewModel', function () {
+	it('test name of BlockViewModel', function () {
 
 		var mockDataModel = {
 			name: "Woot",
 		};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
 		expect(testObject.name()).toBe(mockDataModel.name);
 	});
 
-	it('test name of NodeViewModel defaults to empty string', function () {
+	it('test name of BlockViewModel defaults to empty string', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
 		expect(testObject.name()).toBe("");
 	});
 
-	it('test node is deselected by default', function () {
+	it('test block is deselected by default', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
 		expect(testObject.selected()).toBe(false);
 	});
 
-	it('test node width is set by default', function () {
+	it('test block width is set by default', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
-		expect(testObject.width() === flowchart.defaultNodeWidth).toBe(true);
+		expect(testObject.width() === distributionnetwork.defaultBlockWidth).toBe(true);
 	});
 
-	it('test node width is used', function () {
+	it('test block width is used', function () {
 
 		var mockDataModel = {"width": 900 };
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
 		expect(testObject.width()).toBe(900);
 	});
 
-	it('test computeConnectorPos uses node width', function () {
+	it('test computeConnectorPos uses block width', function () {
 
 		var mockDataModel = {
 			x: function () {
@@ -197,12 +195,12 @@ describe('flowchart-viewmodel', function () {
 			"width": 900
 		};
 
-		var testObject = flowchart.computeConnectorPos(mockDataModel, 1, false);
+		var testObject = distributionnetwork.computeConnectorPos(mockDataModel, 1, false);
 
 		expect(testObject.x).toBe(910);
 	});
 
-	it('test computeConnectorPos uses default node width', function () {
+	it('test computeConnectorPos uses default block width', function () {
 
 		var mockDataModel = {
 			x: function () {
@@ -213,27 +211,27 @@ describe('flowchart-viewmodel', function () {
 			},
 		};
 
-		var testObject = flowchart.computeConnectorPos(mockDataModel, 1, false);
+		var testObject = distributionnetwork.computeConnectorPos(mockDataModel, 1, false);
 
-		expect(testObject.x).toBe(flowchart.defaultNodeWidth + 10);
+		expect(testObject.x).toBe(distributionnetwork.defaultBlockWidth + 10);
 	});
 
-	it('test node can be selected', function () {
+	it('test block can be selected', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
 		testObject.select();
 
 		expect(testObject.selected()).toBe(true);
 	});
 
-	it('test node can be deselected', function () {
+	it('test block can be deselected', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
 		testObject.select();
 
@@ -242,11 +240,11 @@ describe('flowchart-viewmodel', function () {
 		expect(testObject.selected()).toBe(false);
 	});
 
-	it('test node can be selection can be toggled', function () {
+	it('test block can be selection can be toggled', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
 		testObject.toggleSelected();
 
@@ -257,19 +255,14 @@ describe('flowchart-viewmodel', function () {
 		expect(testObject.selected()).toBe(false);
 	});
 
-	it('test can add input connector to node', function () {
+	it('test can add input connector to block', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
-
-		var name1 = "Connector1";
-		var name2 = "Connector2";
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 		var data1 = {
-			name: name1
 		};
 		var data2 = {
-			name: name2
 		}
 		testObject.addInputConnector(data1);
 		testObject.addInputConnector(data2);
@@ -283,19 +276,15 @@ describe('flowchart-viewmodel', function () {
 		expect(testObject.data.inputConnectors[1]).toBe(data2);
 	});
 
-	it('test can add output connector to node', function () {
+	it('test can add output connector to block', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.NodeViewModel(mockDataModel);
+		var testObject = new distributionnetwork.BlockViewModel(mockDataModel);
 
-		var name1 = "Connector1";
-		var name2 = "Connector2";
 		var data1 = {
-			name: name1
 		};
 		var data2 = {
-			name: name2
 		}
 		testObject.addOutputConnector(data1);
 		testObject.addOutputConnector(data2);
@@ -309,22 +298,22 @@ describe('flowchart-viewmodel', function () {
 		expect(testObject.data.outputConnectors[1]).toBe(data2);
 	});
 
-	it('construct ChartViewModel with no nodes or connections', function () {
+	it('construct ChartViewModel with no blocks or connections', function () {
 
 		var mockDataModel = {};
 
-		new flowchart.ChartViewModel(mockDataModel);
+		new distributionnetwork.ChartViewModel(mockDataModel);
 
 	});
 
-	it('construct ChartViewModel with empty nodes and connections', function () {
+	it('construct ChartViewModel with empty blocks and connections', function () {
 
 		var mockDataModel = {
-			nodes: [],
+			blocks: [],
 			connections: [],
 		};
 
-		new flowchart.ChartViewModel(mockDataModel);
+		new distributionnetwork.ChartViewModel(mockDataModel);
 
 	});
 
@@ -334,7 +323,7 @@ describe('flowchart-viewmodel', function () {
 		var mockSourceConnector = {};
 		var mockDestConnector = {};
 
-		new flowchart.ConnectionViewModel(mockDataModel, mockSourceConnector, mockDestConnector);
+		new distributionnetwork.ConnectionViewModel(mockDataModel, mockSourceConnector, mockDestConnector);
 	});
 
 	it('retreive source and dest coordinates', function () {
@@ -342,14 +331,14 @@ describe('flowchart-viewmodel', function () {
 		var mockDataModel = {
 		};
 
-		var mockSourceParentNode = {
+		var mockSourceParentBlock = {
 			x: function () { return 5 },
 			y: function () { return 10 },
 		};
 
 		var mockSourceConnector = {
-			parentNode: function () {
-				return mockSourceParentNode;
+			parentBlock: function () {
+				return mockSourceParentBlock;
 			},
 
 			x: function() {
@@ -361,14 +350,14 @@ describe('flowchart-viewmodel', function () {
 			},
 		};
 
-		var mockDestParentNode = {
+		var mockDestParentBlock = {
 			x: function () { return 50 },
 			y: function () { return 30 },
 		};
 
 		var mockDestConnector = {
-			parentNode: function () {
-				return mockDestParentNode;
+			parentBlock: function () {
+				return mockDestParentBlock;
 			},
 
 			x: function() {
@@ -380,7 +369,7 @@ describe('flowchart-viewmodel', function () {
 			},
 		};
 
-		var testObject = new flowchart.ConnectionViewModel(mockDataModel, mockSourceConnector, mockDestConnector);
+		var testObject = new distributionnetwork.ConnectionViewModel(mockDataModel, mockSourceConnector, mockDestConnector);
 
 		testObject.sourceCoord();
 		expect(testObject.sourceCoordX()).toBe(10);
@@ -399,7 +388,7 @@ describe('flowchart-viewmodel', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.ConnectionViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ConnectionViewModel(mockDataModel);
 
 		expect(testObject.selected()).toBe(false);
 	});
@@ -408,7 +397,7 @@ describe('flowchart-viewmodel', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.ConnectionViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ConnectionViewModel(mockDataModel);
 
 		testObject.select();
 
@@ -419,7 +408,7 @@ describe('flowchart-viewmodel', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.ConnectionViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ConnectionViewModel(mockDataModel);
 
 		testObject.select();
 
@@ -432,7 +421,7 @@ describe('flowchart-viewmodel', function () {
 
 		var mockDataModel = {};
 
-		var testObject = new flowchart.ConnectionViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ConnectionViewModel(mockDataModel);
 
 		testObject.toggleSelected();
 
@@ -443,13 +432,13 @@ describe('flowchart-viewmodel', function () {
 		expect(testObject.selected()).toBe(false);
 	});
 
-	it('construct ChartViewModel with a node', function () {
+	it('construct ChartViewModel with a block', function () {
 
 		var mockDataModel = createMockDataModel([1]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
-		expect(testObject.nodes.length).toBe(1);
-		expect(testObject.nodes[0].data).toBe(mockDataModel.nodes[0]);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
+		expect(testObject.blocks.length).toBe(1);
+		expect(testObject.blocks[0].data).toBe(mockDataModel.blocks[0]);
 
 	});
 
@@ -462,63 +451,63 @@ describe('flowchart-viewmodel', function () {
 			]
 		);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
 		expect(testObject.connections.length).toBe(1);
 		expect(testObject.connections[0].data).toBe(mockDataModel.connections[0]);
-		expect(testObject.connections[0].source.data).toBe(mockDataModel.nodes[0].outputConnectors[0]);
-		expect(testObject.connections[0].dest.data).toBe(mockDataModel.nodes[1].inputConnectors[1]);
+		expect(testObject.connections[0].source.data).toBe(mockDataModel.blocks[0].outputConnectors[0]);
+		expect(testObject.connections[0].dest.data).toBe(mockDataModel.blocks[1].inputConnectors[1]);
 	});
 
-	it('test can add new node', function () {
+	it('test can add new block', function () {
 
 		var mockDataModel = createMockDataModel();
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
-		var nodeDataModel = {};
-		testObject.addNode(nodeDataModel);
+		var blockDataModel = {};
+		testObject.addBlock(blockDataModel);
 
-		expect(testObject.nodes.length).toBe(1);
-		expect(testObject.nodes[0].data).toBe(nodeDataModel);
+		expect(testObject.blocks.length).toBe(1);
+		expect(testObject.blocks[0].data).toBe(blockDataModel);
 
-		expect(testObject.data.nodes.length).toBe(1);
-		expect(testObject.data.nodes[0]).toBe(nodeDataModel);
+		expect(testObject.data.blocks.length).toBe(1);
+		expect(testObject.data.blocks[0]).toBe(blockDataModel);
 	});
 
 	it('test can select all', function () {
 
 		var mockDataModel = createMockDataModel([1, 2], [[[1, 0], [2, 1]]]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
-		var node1 = testObject.nodes[0];
-		var node2 = testObject.nodes[1];
+		var block1 = testObject.blocks[0];
+		var block2 = testObject.blocks[1];
 		var connection = testObject.connections[0];
 
 		testObject.selectAll();
 
-		expect(node1.selected()).toBe(true);
-		expect(node2.selected()).toBe(true);
+		expect(block1.selected()).toBe(true);
+		expect(block2.selected()).toBe(true);
 		expect(connection.selected()).toBe(true);
 	});
 
-	it('test can deselect all nodes', function () {
+	it('test can deselect all blocks', function () {
 
 		var mockDataModel = createMockDataModel([1, 2]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
-		var node1 = testObject.nodes[0];
-		var node2 = testObject.nodes[1];
+		var block1 = testObject.blocks[0];
+		var block2 = testObject.blocks[1];
 
-		node1.select();
-		node2.select();
+		block1.select();
+		block2.select();
 
 		testObject.deselectAll();
 
-		expect(node1.selected()).toBe(false);
-		expect(node2.selected()).toBe(false);
+		expect(block1.selected()).toBe(false);
+		expect(block2.selected()).toBe(false);
 	});
 
 	it('test can deselect all connections', function () {
@@ -531,7 +520,7 @@ describe('flowchart-viewmodel', function () {
 			]
 		);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
 		var connection1 = testObject.connections[0];
 		var connection2 = testObject.connections[1];
@@ -545,89 +534,89 @@ describe('flowchart-viewmodel', function () {
 		expect(connection2.selected()).toBe(false);
 	});
 
-	it('test mouse down deselects nodes other than the one clicked', function () {
+	it('test mouse down deselects blocks other than the one clicked', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2, 3 ]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
-		var node1 = testObject.nodes[0];
-		var node2 = testObject.nodes[1];
-		var node3 = testObject.nodes[2];
+		var block1 = testObject.blocks[0];
+		var block2 = testObject.blocks[1];
+		var block3 = testObject.blocks[2];
 
-		// Fake out the nodes as selected.
-		node1.select();
-		node2.select();
-		node3.select();
+		// Fake out the blocks as selected.
+		block1.select();
+		block2.select();
+		block3.select();
 
-		testObject.handleNodeClicked(node2); // Doesn't matter which node is actually clicked.
+		testObject.handleBlockClicked(block2); // Doesn't matter which block is actually clicked.
 
-		expect(node1.selected()).toBe(false);
-		expect(node2.selected()).toBe(true);
-		expect(node3.selected()).toBe(false);
+		expect(block1.selected()).toBe(false);
+		expect(block2.selected()).toBe(true);
+		expect(block3.selected()).toBe(false);
 	});
 
-	it('test mouse down selects the clicked node', function () {
+	it('test mouse down selects the clicked block', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2, 3 ]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 		
-		var node1 = testObject.nodes[0];
-		var node2 = testObject.nodes[1];
-		var node3 = testObject.nodes[2];
+		var block1 = testObject.blocks[0];
+		var block2 = testObject.blocks[1];
+		var block3 = testObject.blocks[2];
 
-		testObject.handleNodeClicked(node3); // Doesn't matter which node is actually clicked.
+		testObject.handleBlockClicked(block3); // Doesn't matter which block is actually clicked.
 
-		expect(node1.selected()).toBe(false);
-		expect(node2.selected()).toBe(false);
-		expect(node3.selected()).toBe(true);
+		expect(block1.selected()).toBe(false);
+		expect(block2.selected()).toBe(false);
+		expect(block3.selected()).toBe(true);
 	});
 
-	it('test mouse down brings node to front', function () {
+	it('test mouse down brings block to front', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2 ]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
-		var node1 = testObject.nodes[0];
-		var node2 = testObject.nodes[1];
+		var block1 = testObject.blocks[0];
+		var block2 = testObject.blocks[1];
 
-		testObject.handleNodeClicked(node1);
+		testObject.handleBlockClicked(block1);
 
-		expect(testObject.nodes[0]).toBe(node2); // Mock node 2 should be bought to front.
-		expect(testObject.nodes[1]).toBe(node1);
+		expect(testObject.blocks[0]).toBe(block2); // Mock block 2 should be bought to front.
+		expect(testObject.blocks[1]).toBe(block1);
 	});
 
-	it('test control + mouse down toggles node selection', function () {
+	it('test control + mouse down toggles block selection', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2, 3 ]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
-		var node1 = testObject.nodes[0];
-		var node2 = testObject.nodes[1];
-		var node3 = testObject.nodes[2];
+		var block1 = testObject.blocks[0];
+		var block2 = testObject.blocks[1];
+		var block3 = testObject.blocks[2];
 
-		node1.select(); // Mark node 1 as already selected.
+		block1.select(); // Mark block 1 as already selected.
 
-		testObject.handleNodeClicked(node2, true);
+		testObject.handleBlockClicked(block2, true);
 
-		expect(node1.selected()).toBe(true);  // This node remains selected.
-		expect(node2.selected()).toBe(true);  // This node is being toggled.
-		expect(node3.selected()).toBe(false); // This node remains unselected.
+		expect(block1.selected()).toBe(true);  // This block remains selected.
+		expect(block2.selected()).toBe(true);  // This block is being toggled.
+		expect(block3.selected()).toBe(false); // This block remains unselected.
 
-		testObject.handleNodeClicked(node2, true);
+		testObject.handleBlockClicked(block2, true);
 
-		expect(node1.selected()).toBe(true);  // This node remains selected.
-		expect(node2.selected()).toBe(false); // This node is being toggled.
-		expect(node3.selected()).toBe(false); // This node remains unselected.
+		expect(block1.selected()).toBe(true);  // This block remains selected.
+		expect(block2.selected()).toBe(false); // This block is being toggled.
+		expect(block3.selected()).toBe(false); // This block remains unselected.
 
-		testObject.handleNodeClicked(node2, true);
+		testObject.handleBlockClicked(block2, true);
 
-		expect(node1.selected()).toBe(true);  // This node remains selected.
-		expect(node2.selected()).toBe(true);  // This node is being toggled.
-		expect(node3.selected()).toBe(false); // This node remains unselected.
+		expect(block1.selected()).toBe(true);  // This block remains selected.
+		expect(block2.selected()).toBe(true);  // This block is being toggled.
+		expect(block3.selected()).toBe(false); // This block remains unselected.
 	});
 
 	it('test mouse down deselects connections other than the one clicked', function () {
@@ -641,7 +630,7 @@ describe('flowchart-viewmodel', function () {
 			]
 		);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
 		var connection1 = testObject.connections[0];
 		var connection2 = testObject.connections[1];
@@ -659,7 +648,7 @@ describe('flowchart-viewmodel', function () {
 		expect(connection3.selected()).toBe(false);
 	});
 
-	it('test node mouse down selects the clicked connection', function () {
+	it('test block mouse down selects the clicked connection', function () {
 
 		var mockDataModel = createMockDataModel(
 			[ 1, 2, 3 ],
@@ -670,7 +659,7 @@ describe('flowchart-viewmodel', function () {
 			]
 		);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 		
 		var connection1 = testObject.connections[0];
 		var connection2 = testObject.connections[1];
@@ -694,7 +683,7 @@ describe('flowchart-viewmodel', function () {
 			]
 		);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
 		var connection1 = testObject.connections[0];
 		var connection2 = testObject.connections[1];
@@ -724,103 +713,103 @@ describe('flowchart-viewmodel', function () {
  	it('test data-model is wrapped in view-model', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2 ], [[[1, 0], [2, 0]]]);
-		var mockNode = mockDataModel.nodes[0];
-		var mockInputConnector = mockNode.inputConnectors[0];
-		var mockOutputConnector = mockNode.outputConnectors[0];
+		var mockBlock = mockDataModel.blocks[0];
+		var mockInputConnector = mockBlock.inputConnectors[0];
+		var mockOutputConnector = mockBlock.outputConnectors[0];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
 		// Chart
 
 		expect(testObject).toBeDefined();
 		expect(testObject).toNotBe(mockDataModel);
 		expect(testObject.data).toBe(mockDataModel);
-		expect(testObject.nodes).toBeDefined();
-		expect(testObject.nodes.length).toBe(2);
+		expect(testObject.blocks).toBeDefined();
+		expect(testObject.blocks.length).toBe(2);
 
-		// Node
+		// Block
 
-		var node = testObject.nodes[0];
+		var block = testObject.blocks[0];
 
-		expect(node).toNotBe(mockNode);
-		expect(node.data).toBe(mockNode);
+		expect(block).toNotBe(mockBlock);
+		expect(block.data).toBe(mockBlock);
 
 		// Connectors
 
-		expect(node.inputConnectors.length).toBe(3);
-		expect(node.inputConnectors[0].data).toBe(mockInputConnector);
+		expect(block.inputConnectors.length).toBe(3);
+		expect(block.inputConnectors[0].data).toBe(mockInputConnector);
 
-		expect(node.outputConnectors.length).toBe(3);		
-		expect(node.outputConnectors[0].data).toBe(mockOutputConnector);
+		expect(block.outputConnectors.length).toBe(3);		
+		expect(block.outputConnectors[0].data).toBe(mockOutputConnector);
 
 		// Connection
  	
 		expect(testObject.connections.length).toBe(1);
-		expect(testObject.connections[0].source).toBe(testObject.nodes[0].outputConnectors[0]);
-		expect(testObject.connections[0].dest).toBe(testObject.nodes[1].inputConnectors[0]);
+		expect(testObject.connections[0].source).toBe(testObject.blocks[0].outputConnectors[0]);
+		expect(testObject.connections[0].dest).toBe(testObject.blocks[1].inputConnectors[0]);
  	});
 
-	it('test can delete 1st selected node', function () {
+	it('test can delete 1st selected block', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2 ]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
-		expect(testObject.nodes.length).toBe(2);
+		expect(testObject.blocks.length).toBe(2);
 
-		testObject.nodes[0].select();
+		testObject.blocks[0].select();
 
-		var mockNode2 = mockDataModel.nodes[1];
+		var mockBlock2 = mockDataModel.blocks[1];
 
 		testObject.deleteSelected();
 
-		expect(testObject.nodes.length).toBe(1);
-		expect(mockDataModel.nodes.length).toBe(1);
-		expect(testObject.nodes[0].data).toBe(mockNode2);
+		expect(testObject.blocks.length).toBe(1);
+		expect(mockDataModel.blocks.length).toBe(1);
+		expect(testObject.blocks[0].data).toBe(mockBlock2);
 	});
 
-	it('test can delete 2nd selected nodes', function () {
+	it('test can delete 2nd selected blocks', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2 ]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
-		expect(testObject.nodes.length).toBe(2);
+		expect(testObject.blocks.length).toBe(2);
 
-		testObject.nodes[1].select();
+		testObject.blocks[1].select();
 
-		var mockNode1 = mockDataModel.nodes[0];
+		var mockBlock1 = mockDataModel.blocks[0];
 
 		testObject.deleteSelected();
 
-		expect(testObject.nodes.length).toBe(1);
-		expect(mockDataModel.nodes.length).toBe(1);
-		expect(testObject.nodes[0].data).toBe(mockNode1);
+		expect(testObject.blocks.length).toBe(1);
+		expect(mockDataModel.blocks.length).toBe(1);
+		expect(testObject.blocks[0].data).toBe(mockBlock1);
 	});
 
-	it('test can delete multiple selected nodes', function () {
+	it('test can delete multiple selected blocks', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2, 3, 4 ]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
-		expect(testObject.nodes.length).toBe(4);
+		expect(testObject.blocks.length).toBe(4);
 
-		testObject.nodes[1].select();
-		testObject.nodes[2].select();
+		testObject.blocks[1].select();
+		testObject.blocks[2].select();
 
-		var mockNode1 = mockDataModel.nodes[0];
-		var mockNode4 = mockDataModel.nodes[3];
+		var mockBlock1 = mockDataModel.blocks[0];
+		var mockBlock4 = mockDataModel.blocks[3];
 
 		testObject.deleteSelected();
 
-		expect(testObject.nodes.length).toBe(2);
-		expect(mockDataModel.nodes.length).toBe(2);
-		expect(testObject.nodes[0].data).toBe(mockNode1);
-		expect(testObject.nodes[1].data).toBe(mockNode4);
+		expect(testObject.blocks.length).toBe(2);
+		expect(mockDataModel.blocks.length).toBe(2);
+		expect(testObject.blocks[0].data).toBe(mockBlock1);
+		expect(testObject.blocks[1].data).toBe(mockBlock4);
 	});
 	
-	it('deleting a node also deletes its connections', function () {
+	it('deleting a block also deletes its connections', function () {
 
 		var mockDataModel = createMockDataModel(
 			[ 1, 2, 3 ],
@@ -830,19 +819,19 @@ describe('flowchart-viewmodel', function () {
 			]
 		);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
 		expect(testObject.connections.length).toBe(2);
 
-		// Select the middle node.
-		testObject.nodes[1].select();
+		// Select the middle block.
+		testObject.blocks[1].select();
 
 		testObject.deleteSelected();
 
 		expect(testObject.connections.length).toBe(0);
 	});
 
-	it('deleting a node doesnt delete other connections', function () {
+	it('deleting a block doesnt delete other connections', function () {
 
 		var mockDataModel = createMockDataModel(
 			[ 1, 2, 3 ],
@@ -851,12 +840,12 @@ describe('flowchart-viewmodel', function () {
 			]
 		);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
 		expect(testObject.connections.length).toBe(1);
 
-		// Select the middle node.
-		testObject.nodes[1].select();
+		// Select the middle block.
+		testObject.blocks[1].select();
 
 		testObject.deleteSelected();
 
@@ -875,7 +864,7 @@ describe('flowchart-viewmodel', function () {
 
 		var mockRemainingConnectionDataModel = mockDataModel.connections[1];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
 		expect(testObject.connections.length).toBe(2);
 
@@ -900,7 +889,7 @@ describe('flowchart-viewmodel', function () {
 
 		var mockRemainingConnectionDataModel = mockDataModel.connections[0];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
 		expect(testObject.connections.length).toBe(2);
 
@@ -929,7 +918,7 @@ describe('flowchart-viewmodel', function () {
 		var mockRemainingConnectionDataModel1 = mockDataModel.connections[0];
 		var mockRemainingConnectionDataModel2 = mockDataModel.connections[3];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
 		expect(testObject.connections.length).toBe(4);
 
@@ -944,25 +933,25 @@ describe('flowchart-viewmodel', function () {
 		expect(testObject.connections[1].data).toBe(mockRemainingConnectionDataModel2);
 	});
 
-	it('can select nodes via selection rect', function () {
+	it('can select blocks via selection rect', function () {
 
 		var mockDataModel = createMockDataModel([ 1, 2, 3 ]);
-		mockDataModel.nodes[0].x = 0;
-		mockDataModel.nodes[0].y = 0;
-		mockDataModel.nodes[1].x = 1020;
-		mockDataModel.nodes[1].y = 1020;
-		mockDataModel.nodes[2].x = 3000;
-		mockDataModel.nodes[2].y = 3000;
+		mockDataModel.blocks[0].x = 0;
+		mockDataModel.blocks[0].y = 0;
+		mockDataModel.blocks[1].x = 1020;
+		mockDataModel.blocks[1].y = 1020;
+		mockDataModel.blocks[2].x = 3000;
+		mockDataModel.blocks[2].y = 3000;
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
-		testObject.nodes[0].select(); // Select a nodes, to ensure it is correctly deselected.
+		testObject.blocks[0].select(); // Select a blocks, to ensure it is correctly deselected.
 
 		testObject.applySelectionRect({ x: 1000, y: 1000, width: 1000, height: 1000 });
 
-		expect(testObject.nodes[0].selected()).toBe(false);
-		expect(testObject.nodes[1].selected()).toBe(true);
-		expect(testObject.nodes[2].selected()).toBe(false);
+		expect(testObject.blocks[0].selected()).toBe(false);
+		expect(testObject.blocks[1].selected()).toBe(true);
+		expect(testObject.blocks[2].selected()).toBe(false);
 	});
 
 	it('can select connections via selection rect', function () {
@@ -975,16 +964,16 @@ describe('flowchart-viewmodel', function () {
 				[[ 3, 2 ], [ 4, 1 ]]
 			]
 		);
-		mockDataModel.nodes[0].x = 0;
-		mockDataModel.nodes[0].y = 0;
-		mockDataModel.nodes[1].x = 1020;
-		mockDataModel.nodes[1].y = 1020;
-		mockDataModel.nodes[2].x = 1500;
-		mockDataModel.nodes[2].y = 1500;
-		mockDataModel.nodes[3].x = 3000;
-		mockDataModel.nodes[3].y = 3000;
+		mockDataModel.blocks[0].x = 0;
+		mockDataModel.blocks[0].y = 0;
+		mockDataModel.blocks[1].x = 1020;
+		mockDataModel.blocks[1].y = 1020;
+		mockDataModel.blocks[2].x = 1500;
+		mockDataModel.blocks[2].y = 1500;
+		mockDataModel.blocks[3].x = 3000;
+		mockDataModel.blocks[3].y = 3000;
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
 		testObject.connections[0].select(); // Select a connection, to ensure it is correctly deselected.
 
@@ -995,73 +984,73 @@ describe('flowchart-viewmodel', function () {
 		expect(testObject.connections[2].selected()).toBe(false);
 	});
 
-	it('test update selected nodes location', function () {
+	it('test update selected blocks location', function () {
 		var mockDataModel = createMockDataModel([1]);
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
-		var node = testObject.nodes[0];
-		node.select();
+		var block = testObject.blocks[0];
+		block.select();
 
 		var xInc = 5;
 		var yInc = 15;
 
-		testObject.updateSelectedNodesLocation(xInc, yInc);
+		testObject.updateSelectedBlocksLocation(xInc, yInc);
 
-		expect(node.x()).toBe(xInc);
-		expect(node.y()).toBe(yInc);
+		expect(block.x()).toBe(xInc);
+		expect(block.y()).toBe(yInc);
 	});
 
-	it('test update selected nodes location, ignores unselected nodes', function () {
+	it('test update selected blocks location, ignores unselected blocks', function () {
 		var mockDataModel = createMockDataModel([1]);
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 
 
-		var node = testObject.nodes[0];
+		var block = testObject.blocks[0];
 
 		var xInc = 5;
 		var yInc = 15;
 
-		testObject.updateSelectedNodesLocation(xInc, yInc);
+		testObject.updateSelectedBlocksLocation(xInc, yInc);
 
-		expect(node.x()).toBe(0);
-		expect(node.y()).toBe(0);
+		expect(block.x()).toBe(0);
+		expect(block.y()).toBe(0);
 	});
 
-	it('test find node throws when there are no nodes', function () {
+	it('test find block throws when there are no blocks', function () {
 		var mockDataModel = createMockDataModel();
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		expect(function () { testObject.findNode(150); }).toThrow();
+		expect(function () { testObject.findBlock(150); }).toThrow();
 	});
 
-	it('test find node throws when node is not found', function () {
+	it('test find block throws when block is not found', function () {
 		var mockDataModel = createMockDataModel([5, 25, 15, 30]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		expect(function () { testObject.findNode(150); }).toThrow();
+		expect(function () { testObject.findBlock(150); }).toThrow();
 	});
 
-	it('test find node retreives correct node', function () {
+	it('test find block retreives correct block', function () {
 		var mockDataModel = createMockDataModel([5, 25, 15, 30]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		expect(testObject.findNode(15)).toBe(testObject.nodes[2]);
+		expect(testObject.findBlock(15)).toBe(testObject.blocks[2]);
 	});
 
-	it('test find input connector throws when there are no nodes', function () {
+	it('test find input connector throws when there are no blocks', function () {
 		var mockDataModel = createMockDataModel();
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findInputConnector(150, 1); }).toThrow();
 	});
 
-	it('test find input connector throws when the node is not found', function () {
+	it('test find input connector throws when the block is not found', function () {
 		var mockDataModel = createMockDataModel([ 1, 2, 3]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findInputConnector(150, 1); }).toThrow();
 	});
@@ -1069,9 +1058,9 @@ describe('flowchart-viewmodel', function () {
 	it('test find input connector throws when there are no connectors', function () {
 		var mockDataModel = createMockDataModel([ 1 ]);
 
-		mockDataModel.nodes[0].inputConnectors = [];
+		mockDataModel.blocks[0].inputConnectors = [];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findInputConnector(1, 1); }).toThrow();
 	});
@@ -1079,11 +1068,11 @@ describe('flowchart-viewmodel', function () {
 	it('test find input connector throws when connector is not found', function () {
 		var mockDataModel = createMockDataModel([5]);
 
-		mockDataModel.nodes[0].inputConnectors = [ 
+		mockDataModel.blocks[0].inputConnectors = [ 
 			{} // Only 1 input connector.
 		];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findInputConnector(5, 1); }).toThrow();
 	});
@@ -1091,23 +1080,23 @@ describe('flowchart-viewmodel', function () {
 	it('test find input connector retreives correct connector', function () {
 		var mockDataModel = createMockDataModel([5, 25, 15, 30]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		expect(testObject.findInputConnector(15, 1)).toBe(testObject.nodes[2].inputConnectors[1]);
+		expect(testObject.findInputConnector(15, 1)).toBe(testObject.blocks[2].inputConnectors[1]);
 	});
 
-	it('test find output connector throws when there are no nodes', function () {
+	it('test find output connector throws when there are no blocks', function () {
 		var mockDataModel = createMockDataModel();
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findOutputConnector(150, 1); }).toThrow();
 	});
 
-	it('test find output connector throws when the node is not found', function () {
+	it('test find output connector throws when the block is not found', function () {
 		var mockDataModel = createMockDataModel([ 1, 2, 3]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findOutputConnector(150, 1); }).toThrow();
 	});
@@ -1115,9 +1104,9 @@ describe('flowchart-viewmodel', function () {
 	it('test find output connector throws when there are no connectors', function () {
 		var mockDataModel = createMockDataModel([ 1 ]);
 
-		mockDataModel.nodes[0].outputConnectors = [];
+		mockDataModel.blocks[0].outputConnectors = [];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findOutputConnector(1, 1); }).toThrow();
 	});
@@ -1125,11 +1114,11 @@ describe('flowchart-viewmodel', function () {
 	it('test find output connector throws when connector is not found', function () {
 		var mockDataModel = createMockDataModel([5]);
 
-		mockDataModel.nodes[0].outputConnectors = [ 
+		mockDataModel.blocks[0].outputConnectors = [ 
 			{} // Only 1 input connector.
 		];
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		expect(function () { testObject.findOutputConnector(5, 1); }).toThrow();
 	});
@@ -1137,9 +1126,9 @@ describe('flowchart-viewmodel', function () {
 	it('test find output connector retreives correct connector', function () {
 		var mockDataModel = createMockDataModel([5, 25, 15, 30]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		expect(testObject.findOutputConnector(15, 1)).toBe(testObject.nodes[2].outputConnectors[1]);
+		expect(testObject.findOutputConnector(15, 1)).toBe(testObject.blocks[2].outputConnectors[1]);
 	});
 
 
@@ -1147,10 +1136,10 @@ describe('flowchart-viewmodel', function () {
 
 		var mockDataModel = createMockDataModel([5, 25]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		var startConnector = testObject.nodes[0].outputConnectors[0];
-		var endConnector = testObject.nodes[1].inputConnectors[1];
+		var startConnector = testObject.blocks[0].outputConnectors[0];
+		var endConnector = testObject.blocks[1].inputConnectors[1];
 
 		testObject.createNewConnection(startConnector, endConnector);
 
@@ -1163,9 +1152,9 @@ describe('flowchart-viewmodel', function () {
 		var connectionData = testObject.data.connections[0];
 		expect(connection.data).toBe(connectionData);
 
-		expect(connectionData.source.nodeID).toBe(5);
+		expect(connectionData.source.blockID).toBe(5);
 		expect(connectionData.source.connectorIndex).toBe(0);
-		expect(connectionData.dest.nodeID).toBe(25);
+		expect(connectionData.dest.blockID).toBe(25);
 		expect(connectionData.dest.connectorIndex).toBe(1);
 	});
 
@@ -1173,10 +1162,10 @@ describe('flowchart-viewmodel', function () {
 
 		var mockDataModel = createMockDataModel([5, 25]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel);
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel);
 
-		var startConnector = testObject.nodes[1].inputConnectors[1];
-		var endConnector = testObject.nodes[0].outputConnectors[0];
+		var startConnector = testObject.blocks[1].inputConnectors[1];
+		var endConnector = testObject.blocks[0].outputConnectors[0];
 
 		testObject.createNewConnection(startConnector, endConnector);
 
@@ -1189,53 +1178,53 @@ describe('flowchart-viewmodel', function () {
 		var connectionData = testObject.data.connections[0];
 		expect(connection.data).toBe(connectionData);
 
-		expect(connectionData.source.nodeID).toBe(5);
+		expect(connectionData.source.blockID).toBe(5);
 		expect(connectionData.source.connectorIndex).toBe(0);
-		expect(connectionData.dest.nodeID).toBe(25);
+		expect(connectionData.dest.blockID).toBe(25);
 		expect(connectionData.dest.connectorIndex).toBe(1);
 	});
 
-	it('test get selected nodes results in empty array when there are no nodes', function () {
+	it('test get selected blocks results in empty array when there are no blocks', function () {
 
 		var mockDataModel = createMockDataModel();
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		var selectedNodes = testObject.getSelectedNodes();
+		var selectedBlocks = testObject.getSelectedBlocks();
 
-		expect(selectedNodes.length).toBe(0);
+		expect(selectedBlocks.length).toBe(0);
 	});
 
-	it('test get selected nodes results in empty array when none selected', function () {
+	it('test get selected blocks results in empty array when none selected', function () {
 
 		var mockDataModel = createMockDataModel([1, 2, 3, 4]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		var selectedNodes = testObject.getSelectedNodes();
+		var selectedBlocks = testObject.getSelectedBlocks();
 
-		expect(selectedNodes.length).toBe(0);
+		expect(selectedBlocks.length).toBe(0);
 	});
 
-	it('test can get selected nodes', function () {
+	it('test can get selected blocks', function () {
 
 		var mockDataModel = createMockDataModel([1, 2, 3, 4]);
 
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
-		var node1 = testObject.nodes[0];
-		var node2 = testObject.nodes[1];
-		var node3 = testObject.nodes[2];
-		var node4 = testObject.nodes[3];
+		var block1 = testObject.blocks[0];
+		var block2 = testObject.blocks[1];
+		var block3 = testObject.blocks[2];
+		var block4 = testObject.blocks[3];
 
-		node2.select();
-		node3.select();
+		block2.select();
+		block3.select();
 
-		var selectedNodes = testObject.getSelectedNodes();
+		var selectedBlocks = testObject.getSelectedBlocks();
 
-		expect(selectedNodes.length).toBe(2);
-		expect(selectedNodes[0]).toBe(node2);
-		expect(selectedNodes[1]).toBe(node3);	
+		expect(selectedBlocks.length).toBe(2);
+		expect(selectedBlocks[0]).toBe(block2);
+		expect(selectedBlocks[1]).toBe(block3);	
 	});
 
 	it('test can get selected connections', function () {
@@ -1249,7 +1238,7 @@ describe('flowchart-viewmodel', function () {
 				[[ 3, 2 ], [ 2, 1 ]]
 			]
 		);
-		var testObject = new flowchart.ChartViewModel(mockDataModel); 		
+		var testObject = new distributionnetwork.ChartViewModel(mockDataModel); 		
 
 		var connection1 = testObject.connections[0];
 		var connection2 = testObject.connections[1];

@@ -1,13 +1,6 @@
 <html>
 	<head>
-		<title>AngularJS-FlowChart</title>
-
-		<!-- 
-		LiveReload support.
-		http://livereload.com/
-		-->
-		<script src="http://localhost:35729/livereload.js?snipver=1"></script>
-
+		<title>AngularJS-DistributionNetwork</title>
 	</head>	
 	<body 
 		ng-app="app" 
@@ -21,48 +14,48 @@
 		    <div style="width: 600px; float: left;"> 
 				<textarea 
 					style="width: 100%; height: 100%;"
-					chart-json-edit
-					view-model="chartViewModel"
+					network-json-edit
+					view-model="networkViewModel"
 					>
 				</textarea>
 			</div>
 		    <div style="margin-left: 600px;">
     			<button
-    				ng-click="addNewNode()"
-    				title="Add a new node to the chart"
+    				ng-click="addNewBlock()"
+    				title="Add a new block to the network"
     				>
-    				Add Node
+    				Add Block
 				</button>
     			<button
     				ng-click="addNewInputConnector()"
-    				ng-disabled="chartViewModel.getSelectedNodes().length == 0"
-    				title="Add a new input connector to the selected node"
+    				ng-disabled="networkViewModel.getSelectedBlocks().length == 0"
+    				title="Add a new input connector to the selected block"
     				>
     				Add Input Connector
 				</button>
     			<button
     				ng-click="addNewOutputConnector()"
-    				ng-disabled="chartViewModel.getSelectedNodes().length == 0"
-    				title="Add a new output connector to the selected node"
+    				ng-disabled="networkViewModel.getSelectedBlocks().length == 0"
+    				title="Add a new output connector to the selected block"
     				>
     				Add Output Connector
 				</button>
     			<button
     				ng-click="deleteSelected()"
-    				ng-disabled="chartViewModel.getSelectedNodes().length == 0 && chartViewModel.getSelectedConnections().length == 0"
-    				title="Delete selected nodes and connections"
+    				ng-disabled="networkViewModel.getSelectedBlocks().length == 0 && networkViewModel.getSelectedConnections().length == 0"
+    				title="Delete selected blocks and connections"
     				>
     				Delete Selected
 				</button>
 
 				<!--
-				This custom element defines the flowchart.
+				This custom element defines the distributionnetwork.
 				-->
-			    <flow-chart
+			    <distribution-network
 		    		style="margin: 5px; width: 100%; height: 100%;"
-			      	chart="chartViewModel"
+			      	network="networkViewModel"
 			      	>
-			    </flow-chart>
+			    </distribution-network>
 		    </div>
 		</div>
 
@@ -72,13 +65,13 @@
 		<script src="lib/jquery-2.0.2.js" type="text/javascript"></script>
 		<script src="lib/angular.js" type="text/javascript"></script>
 
-		<!-- Flowchart code. -->
+		<!-- Flownetwork code. -->
 		<script src="debug.js" type="text/javascript"></script>
-		<script src="flowchart/svg_class.js" type="text/javascript"></script>
-		<script src="flowchart/mouse_capture_service.js" type="text/javascript"></script>
-		<script src="flowchart/dragging_service.js" type="text/javascript"></script>
-		<script src="flowchart/flowchart_viewmodel.js" type="text/javascript"></script>
-		<script src="flowchart/flowchart_directive.js" type="text/javascript"></script>
+		<script src="distributionnetwork/svg_class.js" type="text/javascript"></script>
+		<script src="distributionnetwork/mouse_capture_service.js" type="text/javascript"></script>
+		<script src="distributionnetwork/dragging_service.js" type="text/javascript"></script>
+		<script src="distributionnetwork/distributionnetwork_viewmodel.js" type="text/javascript"></script>
+		<script src="distributionnetwork/distributionnetwork_directive.js" type="text/javascript"></script>
 
 		<!-- App code. -->
 		<script src="app.js" type="text/javascript"></script>

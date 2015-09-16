@@ -1,14 +1,14 @@
-AngularJS-FlowChart
+AngularJS-DistributionNetwork
 ===================
 
-A WebUI control for visualizing and editing flow charts.
+A WebUI control for visualizing and editing flow networks.
 
-This isn't designed to be completely general purpose, but it will be a good basis if you need an SVG flowchart and you are willing to work with AngularJS.
+This isn't designed to be completely general purpose, but it will be a good basis if you need an SVG distributionnetwork and you are willing to work with AngularJS.
 
 Code Project Article
 --------------------
 
-http://www.codeproject.com/Articles/709340/Implementing-a-Flowchart-with-SVG-and-AngularJS
+http://www.codeproject.com/Articles/709340/Implementing-a-Flownetwork-with-SVG-and-AngularJS
 
 
 How to use it
@@ -17,27 +17,27 @@ How to use it
 Include the following Javascript in your HTML file:
 
 ```html
-	<script src="flowchart/svg_class.js" type="text/javascript"></script>
-	<script src="flowchart/mouse_capture_service.js" type="text/javascript"></script>
-	<script src="flowchart/dragging_service.js" type="text/javascript"></script>
-	<script src="flowchart/flowchart_viewmodel.js" type="text/javascript"></script>
-	<script src="flowchart/flowchart_directive.js" type="text/javascript"></script>
+	<script src="distributionnetwork/svg_class.js" type="text/javascript"></script>
+	<script src="distributionnetwork/mouse_capture_service.js" type="text/javascript"></script>
+	<script src="distributionnetwork/dragging_service.js" type="text/javascript"></script>
+	<script src="distributionnetwork/distributionnetwork_viewmodel.js" type="text/javascript"></script>
+	<script src="distributionnetwork/distributionnetwork_directive.js" type="text/javascript"></script>
 ```
 
-Make a dependency on the the flowchart's AngularJS module from your application (or other module):
+Make a dependency on the the distributionnetwork's AngularJS module from your application (or other module):
 
 ```javascript
-	angular.module('app', ['flowChart', ])
+	angular.module('app', ['distributionNetwork', ])
 ```
 
-In your application (or other) controller setup a data-model for the initial flowchart (or AJAX the data-model in from a JSON resource):
+In your application (or other) controller setup a data-model for the initial distributionnetwork (or AJAX the data-model in from a JSON resource):
 
 ```javascript
-	var chartDataModel = {
+	var networkDataModel = {
 
-		nodes: [
+		blocks: [
 			{
-				name: "Example Node 1",
+				name: "Example Block 1",
 				id: 0,
 				x: 0,
 				y: 0,
@@ -66,7 +66,7 @@ In your application (or other) controller setup a data-model for the initial flo
 			},
 
 			{
-				name: "Example Node 2",
+				name: "Example Block 2",
 				id: 1,
 				x: 400,
 				y: 200,
@@ -99,12 +99,12 @@ In your application (or other) controller setup a data-model for the initial flo
 		connections: [
 			{
 				source: {
-					nodeID: 0,
+					blockID: 0,
 					connectorIndex: 1,
 				},
 
 				dest: {
-					nodeID: 1,
+					blockID: 1,
 					connectorIndex: 2,
 				},
 			},
@@ -117,22 +117,22 @@ In your application (or other) controller setup a data-model for the initial flo
 Also in your controller, wrap the data-model in a view-model and add it to the AngularJS scope:
 
 ```javascript
-	$scope.chartViewModel = new flowchart.ChartViewModel(chartDataModel);
+	$scope.networkViewModel = new distributionnetwork.ChartViewModel(networkDataModel);
 ```
 
 Your code is in direct control of creation of the view-model, so you can interact with it in almost anyway you want.
 
-Finally instantiate the flowchart's AngularJS directive in your HTML:
+Finally instantiate the distributionnetwork's AngularJS directive in your HTML:
 
 ```html
-    <flow-chart
+    <distribution-network
 		style="margin: 5px; width: 100%; height: 100%;"
-      	chart="chartViewModel"
+      	network="networkViewModel"
       	>
-    </flow-chart>
+    </distribution-network>
 ```
 
-Be sure to bind your view-model as the 'chart' attribute!
+Be sure to bind your view-model as the 'network' attribute!
 
 
 Have fun and please contribute!

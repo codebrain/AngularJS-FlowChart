@@ -1,5 +1,5 @@
 
-describe('flowchart-directive', function () {
+describe('distributionnetwork-directive', function () {
 
 	var testObject;
 	var mockScope;
@@ -7,9 +7,9 @@ describe('flowchart-directive', function () {
 	var mockSvgElement;
 
 	//
-	// Bring in the flowChart module before each test.
+	// Bring in the distributionNetwork module before each test.
 	//
-	beforeEach(module('flowChart'));
+	beforeEach(module('distributionNetwork'));
 
 	//
 	// Helper function to create the controller for each test.
@@ -24,7 +24,7 @@ describe('flowchart-directive', function () {
 			}
 		};
 
-      	testObject = $controller('FlowChartController', {
+      	testObject = $controller('DistributionNetworkController', {
       		$scope: mockScope,
       		dragging: mockDragging,
       		$element: mockSvgElement,
@@ -60,9 +60,9 @@ describe('flowchart-directive', function () {
 	}
 
 	//
-	// Create a mock node data model.
+	// Create a mock block data model.
 	//
-	var createMockNode = function (inputConnectors, outputConnectors) {
+	var createMockBlock = function (inputConnectors, outputConnectors) {
 		return {
 			x: function () { return 0 },
 			y: function () { return 0 },
@@ -74,16 +74,16 @@ describe('flowchart-directive', function () {
 	};
 
 	//
-	// Create a mock chart.
+	// Create a mock network.
 	//
-	var createMockChart = function (mockNodes, mockConnections) {
+	var createMockChart = function (mockBlocks, mockConnections) {
 		return {
-			nodes: mockNodes,
+			blocks: mockBlocks,
 			connections: mockConnections,
 
-			handleNodeClicked: jasmine.createSpy(),
+			handleBlockClicked: jasmine.createSpy(),
 			handleConnectionMouseDown: jasmine.createSpy(),
-			updateSelectedNodesLocation: jasmine.createSpy(),
+			updateSelectedBlocksLocation: jasmine.createSpy(),
 			deselectAll: jasmine.createSpy(),
 			createNewConnection: jasmine.createSpy(),
 			applySelectionRect: jasmine.createSpy(),
@@ -211,53 +211,53 @@ describe('flowchart-directive', function () {
 		expect(testObject.checkForHit(mockElement, "some-class")).toBe(null);
 	});	
 
-	it('test node dragging is started on node mouse down', function () {
+	it('test block dragging is started on block mouse down', function () {
 
 		mockDragging.startDrag = jasmine.createSpy();
 
 		var mockEvt = {};
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 
-		mockScope.nodeMouseDown(mockEvt, mockNode);
+		mockScope.blockMouseDown(mockEvt, mockBlock);
 
 		expect(mockDragging.startDrag).toHaveBeenCalled();
 
 	});
 
-	it('test node click handling is forwarded to view model', function () {
+	it('test block click handling is forwarded to view model', function () {
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
 		var mockEvt = {
 			ctrlKey: false,
 		};
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 
-		mockScope.nodeMouseDown(mockEvt, mockNode);
+		mockScope.blockMouseDown(mockEvt, mockBlock);
 
 		mockDragging.config.clicked();
 
-		expect(mockScope.chart.handleNodeClicked).toHaveBeenCalledWith(mockNode, false);
+		expect(mockScope.network.handleBlockClicked).toHaveBeenCalledWith(mockBlock, false);
 	});
 
-	it('test control + node click handling is forwarded to view model', function () {
+	it('test control + block click handling is forwarded to view model', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
 		var mockEvt = {
 			ctrlKey: true,
 		};
 
-		mockScope.nodeMouseDown(mockEvt, mockNode);
+		mockScope.blockMouseDown(mockEvt, mockBlock);
 
 		mockDragging.config.clicked();
 
-		expect(mockScope.chart.handleNodeClicked).toHaveBeenCalledWith(mockNode, true);
+		expect(mockScope.network.handleBlockClicked).toHaveBeenCalledWith(mockBlock, true);
 	});
 
-	it('test node dragging updates selected nodes location', function () {
+	it('test block dragging updates selected blocks location', function () {
 
 		var mockEvt = {
 			view: {
@@ -266,9 +266,9 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.chart = createMockChart([createMockNode()]);
+		mockScope.network = createMockChart([createMockBlock()]);
 
-		mockScope.nodeMouseDown(mockEvt, mockScope.chart.nodes[0]);
+		mockScope.blockMouseDown(mockEvt, mockScope.network.blocks[0]);
 
 		var xIncrement = 5;
 		var yIncrement = 15;
@@ -276,17 +276,17 @@ describe('flowchart-directive', function () {
 		mockDragging.config.dragStarted(0, 0);
 		mockDragging.config.dragging(xIncrement, yIncrement);
 
-		expect(mockScope.chart.updateSelectedNodesLocation).toHaveBeenCalledWith(xIncrement, yIncrement);
+		expect(mockScope.network.updateSelectedBlocksLocation).toHaveBeenCalledWith(xIncrement, yIncrement);
 	});
 
-	it('test node dragging doesnt modify selection when node is already selected', function () {
+	it('test block dragging doesnt modify selection when block is already selected', function () {
 
-		var mockNode1 = createMockNode();
-		var mockNode2 = createMockNode();
+		var mockBlock1 = createMockBlock();
+		var mockBlock2 = createMockBlock();
 
-		mockScope.chart = createMockChart([mockNode1, mockNode2]);
+		mockScope.network = createMockChart([mockBlock1, mockBlock2]);
 
-		mockNode2.selected = function () { return true; }
+		mockBlock2.selected = function () { return true; }
 
 		var mockEvt = {
 			view: {
@@ -295,19 +295,19 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.nodeMouseDown(mockEvt, mockNode2);
+		mockScope.blockMouseDown(mockEvt, mockBlock2);
 
 		mockDragging.config.dragStarted(0, 0);
 
-		expect(mockScope.chart.deselectAll).not.toHaveBeenCalled();
+		expect(mockScope.network.deselectAll).not.toHaveBeenCalled();
 	});
 
-	it('test node dragging selects node, when the node is not already selected', function () {
+	it('test block dragging selects block, when the block is not already selected', function () {
 
-		var mockNode1 = createMockNode();
-		var mockNode2 = createMockNode();
+		var mockBlock1 = createMockBlock();
+		var mockBlock2 = createMockBlock();
 
-		mockScope.chart = createMockChart([mockNode1, mockNode2]);
+		mockScope.network = createMockChart([mockBlock1, mockBlock2]);
 
 		var mockEvt = {
 			view: {
@@ -316,17 +316,17 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.nodeMouseDown(mockEvt, mockNode2);
+		mockScope.blockMouseDown(mockEvt, mockBlock2);
 
 		mockDragging.config.dragStarted(0, 0);
 
-		expect(mockScope.chart.deselectAll).toHaveBeenCalled();
-		expect(mockNode2.select).toHaveBeenCalled();
+		expect(mockScope.network.deselectAll).toHaveBeenCalled();
+		expect(mockBlock2.select).toHaveBeenCalled();
 	});
 
 	it('test connection click handling is forwarded to view model', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 
 		var mockEvt = {
 			stopPropagation: jasmine.createSpy(),
@@ -335,18 +335,18 @@ describe('flowchart-directive', function () {
 		};
 		var mockConnection = {};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
 		mockScope.connectionMouseDown(mockEvt, mockConnection);
 
-		expect(mockScope.chart.handleConnectionMouseDown).toHaveBeenCalledWith(mockConnection, false);
+		expect(mockScope.network.handleConnectionMouseDown).toHaveBeenCalledWith(mockConnection, false);
 		expect(mockEvt.stopPropagation).toHaveBeenCalled();
 		expect(mockEvt.preventDefault).toHaveBeenCalled();
 	});
 
 	it('test control + connection click handling is forwarded to view model', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 
 		var mockEvt = {
 			stopPropagation: jasmine.createSpy(),
@@ -355,29 +355,29 @@ describe('flowchart-directive', function () {
 		};
 		var mockConnection = {};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
 		mockScope.connectionMouseDown(mockEvt, mockConnection);
 
-		expect(mockScope.chart.handleConnectionMouseDown).toHaveBeenCalledWith(mockConnection, true);
+		expect(mockScope.network.handleConnectionMouseDown).toHaveBeenCalledWith(mockConnection, true);
 	});
 
 	it('test selection is cleared when background is clicked', function () {
 
 		var mockEvt = {};
 
-		mockScope.chart = createMockChart([createMockNode()]);
+		mockScope.network = createMockChart([createMockBlock()]);
 
-		mockScope.chart.nodes[0].selected = true;
+		mockScope.network.blocks[0].selected = true;
 
 		mockScope.mouseDown(mockEvt);
 
-		expect(mockScope.chart.deselectAll).toHaveBeenCalled();
+		expect(mockScope.network.deselectAll).toHaveBeenCalled();
 	});	
 
 	it('test background mouse down commences selection dragging', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 		var mockEvt = {
 			view: {
 				scrollX: 0,
@@ -385,7 +385,7 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
 		mockScope.mouseDown(mockEvt);
 
@@ -396,7 +396,7 @@ describe('flowchart-directive', function () {
 
 	it('test can end selection dragging', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 		var mockEvt = {
 			view: {
 				scrollX: 0,
@@ -404,7 +404,7 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
 		mockScope.mouseDown(mockEvt);
 
@@ -415,9 +415,9 @@ describe('flowchart-directive', function () {
 		expect(mockScope.dragSelecting).toBe(false);		
  	});
 
-	it('test selection dragging ends by selecting nodes', function () {
+	it('test selection dragging ends by selecting blocks', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 		var mockEvt = {
 			view: {
 				scrollX: 0,
@@ -425,7 +425,7 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
 		mockScope.mouseDown(mockEvt);
 
@@ -443,12 +443,12 @@ describe('flowchart-directive', function () {
 
  		mockDragging.config.dragEnded();
 
-		expect(mockScope.chart.applySelectionRect).toHaveBeenCalledWith(selectionRect);
+		expect(mockScope.network.applySelectionRect).toHaveBeenCalledWith(selectionRect);
  	});
 
 	it('test mouse down commences connection dragging', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 		var mockEvt = {
 			view: {
 				scrollX: 0,
@@ -456,9 +456,9 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
-		mockScope.connectorMouseDown(mockEvt, mockScope.chart.nodes[0], mockScope.chart.nodes[0].inputConnectors[0], 0, false);
+		mockScope.connectorMouseDown(mockEvt, mockScope.network.blocks[0], mockScope.network.blocks[0].inputConnectors[0], 0, false);
 
 		mockDragging.config.dragStarted(0, 0);
 
@@ -467,7 +467,7 @@ describe('flowchart-directive', function () {
 
 	it('test can end connection dragging', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 		var mockEvt = {
 			view: {
 				scrollX: 0,
@@ -475,9 +475,9 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
-		mockScope.connectorMouseDown(mockEvt, mockScope.chart.nodes[0], mockScope.chart.nodes[0].inputConnectors[0], 0, false);
+		mockScope.connectorMouseDown(mockEvt, mockScope.network.blocks[0], mockScope.network.blocks[0].inputConnectors[0], 0, false);
 
  		mockDragging.config.dragStarted(0, 0, mockEvt);
  		mockDragging.config.dragging(0, 0, mockEvt);
@@ -488,7 +488,7 @@ describe('flowchart-directive', function () {
 
 	it('test can make a connection by dragging', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 		var mockDraggingConnector = {};
 		var mockDragOverConnector = {};
 		var mockEvt = {
@@ -498,9 +498,9 @@ describe('flowchart-directive', function () {
             },
         };
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
-		mockScope.connectorMouseDown(mockEvt, mockScope.chart.nodes[0], mockDraggingConnector, 0, false);
+		mockScope.connectorMouseDown(mockEvt, mockScope.network.blocks[0], mockDraggingConnector, 0, false);
 
  		mockDragging.config.dragStarted(0, 0, mockEvt);
  		mockDragging.config.dragging(0, 0, mockEvt);
@@ -510,12 +510,12 @@ describe('flowchart-directive', function () {
 
  		mockDragging.config.dragEnded();
 
- 		expect(mockScope.chart.createNewConnection).toHaveBeenCalledWith(mockDraggingConnector, mockDragOverConnector);
+ 		expect(mockScope.network.createNewConnection).toHaveBeenCalledWith(mockDraggingConnector, mockDragOverConnector);
  	});
 
 	it('test connection creation by dragging is cancelled when dragged over invalid connector', function () {
 
-		var mockNode = createMockNode();
+		var mockBlock = createMockBlock();
 		var mockDraggingConnector = {};
 		var mockEvt = {
 			view: {
@@ -524,9 +524,9 @@ describe('flowchart-directive', function () {
 			},
 		};
 
-		mockScope.chart = createMockChart([mockNode]);
+		mockScope.network = createMockChart([mockBlock]);
 
-		mockScope.connectorMouseDown(mockEvt, mockScope.chart.nodes[0], mockDraggingConnector, 0, false);
+		mockScope.connectorMouseDown(mockEvt, mockScope.network.blocks[0], mockDraggingConnector, 0, false);
 
  		mockDragging.config.dragStarted(0, 0, mockEvt);
  		mockDragging.config.dragging(0, 0, mockEvt);
@@ -536,7 +536,7 @@ describe('flowchart-directive', function () {
 
  		mockDragging.config.dragEnded();
 
- 		expect(mockScope.chart.createNewConnection).not.toHaveBeenCalled();
+ 		expect(mockScope.network.createNewConnection).not.toHaveBeenCalled();
  	});
 
  	it('mouse move over connection caches the connection', function () {
@@ -568,7 +568,7 @@ describe('flowchart-directive', function () {
  		expect(mockScope.mouseOverConnection).toBe(mockConnection);
  	});
 
- 	it('test mouse over connection clears mouse over connector and node', function () {
+ 	it('test mouse over connection clears mouse over connector and block', function () {
 
 		var mockElement = {};
  		var mockConnection = {};
@@ -594,12 +594,12 @@ describe('flowchart-directive', function () {
 
 
  		mockScope.mouseOverConnector = {};
- 		mockScope.mouseOverNode = {};
+ 		mockScope.mouseOverBlock = {};
 
  		mockScope.mouseMove(mockEvent);
 
  		expect(mockScope.mouseOverConnector).toBe(null);
- 		expect(mockScope.mouseOverNode).toBe(null);
+ 		expect(mockScope.mouseOverBlock).toBe(null);
  	});
 
  	it('test mouseMove handles mouse over connector', function () {
@@ -631,12 +631,12 @@ describe('flowchart-directive', function () {
  		expect(mockScope.mouseOverConnector).toBe(mockConnector);
  	});
 
- 	it('test mouseMove handles mouse over node', function () {
+ 	it('test mouseMove handles mouse over block', function () {
 
 		var mockElement = {};
- 		var mockNode = {};
- 		var mockNodeScope = {
- 			node: mockNode
+ 		var mockBlock = {};
+ 		var mockBlockScope = {
+ 			block: mockBlock
  		};
  		var mockEvent = {};
 
@@ -644,8 +644,8 @@ describe('flowchart-directive', function () {
  		// Fake out the function that check if a connector has been hit.
  		//
  		testObject.checkForHit = function (element, whichClass) {
- 			if (whichClass === testObject.nodeClass) {
- 				return mockNodeScope;
+ 			if (whichClass === testObject.blockClass) {
+ 				return mockBlockScope;
  			}
 
  			return null;
@@ -657,6 +657,6 @@ describe('flowchart-directive', function () {
 
  		mockScope.mouseMove(mockEvent);
 
- 		expect(mockScope.mouseOverNode).toBe(mockNode);
+ 		expect(mockScope.mouseOverBlock).toBe(mockBlock);
  	});
 });

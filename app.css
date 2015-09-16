@@ -16,20 +16,20 @@ Generic reset.
 }
 
 /*
-Styles for nodes and connectors.
+Styles for blocks and connectors.
 */
 
-.node-rect {
+.block-rect {
 	stroke: black;
 	stroke-width: 2;
 }
 
-.mouseover-node-rect {
+.mouseover-block-rect {
 	stroke: black;
 	stroke-width: 4;
 }
 
-.selected-node-rect {
+.selected-block-rect {
 	stroke: red;
 	stroke-width: 3;
 }
@@ -83,17 +83,6 @@ Style for connections.
 	fill: gray;
 }
 
-.connection-name{
-	fill: black;
-}
-
-.selected-connection-name{
-	fill: red;
-}
-
-.mouseover-connection-name{
-	fill: gray;
-}
 /*
 Style for the connection being dragged out.
 */
